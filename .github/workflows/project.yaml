@@ -22,14 +22,14 @@ on:
         description: Name of the S3bucket for Terraform backend
         default: "ecr-project"
         type: string
-      backend_iam_role:
-        description: Name of the Terraform backend assumable IAM Role
-        default: "s3-backend-role-terraform"
-        type: string
-      github_iam_role:
-        description: Name of the IAM Role for adding access to ECR repo
-        default: "AWSServiceRoleForECRReplication"
-        type: string
+      #backend_iam_role:
+        #description: Name of the Terraform backend assumable IAM Role
+        #default: "s3-backend-role-terraform"
+        #type: string
+      #github_iam_role:
+        #description: Name of the IAM Role for adding access to ECR repo
+        #default: "AWSServiceRoleForECRReplication"
+        #type: string
       aws_account_id:
         description: AWS Account ID
         default: "911167888809"
