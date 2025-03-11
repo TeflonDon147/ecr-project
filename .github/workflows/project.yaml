@@ -60,7 +60,7 @@ jobs:
       #- name: Configure AWS Credentials
         #uses: aws-actions/configure-aws-credentials@v2
         #with:
-          #role-to-assume: arn:aws:iam::${{ 911167888809 }}:role/AWSServiceRoleForECRReplication
+          #role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/AWSServiceRoleForECRReplication
           #aws-region: ${{ eu-central-1 }}
 
       - name: Setup Terraform
@@ -99,8 +99,8 @@ jobs:
           terraform apply \
             -var 'repository_name=${{ env.ECR_REPO_NAME }}' \
             -var 'lifecycle_policy=${{ inputs.lifecycle_policy_file }}' \
-            -var 'iam_role=arn:aws:iam::${{ 911167888809 }}:role/${{ AWSServiceRoleForECRReplication }}' \
-            -var 'aws_account_id=${{ 911167888809 }}' \
+            -var 'iam_role=arn:aws:iam::${{ inputs.aws_account_id }}:role/AWSServiceRoleForECRReplication' \
+            -var 'aws_account_id=${{ inputs.aws_account_id }}' \
             -auto-approve
         working-directory: ${{ github.action_path }}
 
@@ -108,7 +108,8 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
         with:
-          registries: ${{ 911167888809 }}
+          registries: ${{ inputs.aws_account_id }}
+
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-publish
