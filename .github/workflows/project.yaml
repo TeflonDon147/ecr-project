@@ -4,11 +4,11 @@ on:
     inputs:
       path_to_dockerfile:
         description: Path to the dockerfile (default = 'Dockerfile')
-        default: "$(pwd)/dockerfile"
+        default: "dockerfile"
         type: string
       docker_build_dir:
         description: Docker build directory (default = '.')
-        default: "project"
+        default: "ecr-project"
         type: string
       image_tag:
         description: Tag to apply to images.
@@ -16,7 +16,7 @@ on:
         default: teflon-project
       lifecycle_policy_file:
         description: Path to the lifecycle policy JSON file (default = 'policy.json')
-        default: "$(pwd)/teflon-policy.json"
+        default: "teflon-policy.json"
         type: string
       backend_s3_bucket:
         description: Name of the S3bucket for Terraform backend
@@ -38,10 +38,6 @@ on:
         description: Target AWS Region
         default: "eu-central-1"
         type: string
-      backend_dynamodb_table:
-        description: DynamoDB table for State lock
-        default: "terraform-backend-ddb"
-        type: string
 
 # concurrency required to avoid terraform lock contention during ECR provisioning
 concurrency: ci-${{ github.repository }}-docker-pipeline
@@ -61,11 +57,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: arn:aws:iam::${{ 911167888809 }}:role/AWSServiceRoleForECRReplication
-          aws-region: ${{ eu-central-1 }}
+      #- name: Configure AWS Credentials
+        #uses: aws-actions/configure-aws-credentials@v2
+        #with:
+          #role-to-assume: arn:aws:iam::${{ 911167888809 }}:role/AWSServiceRoleForECRReplication
+          #aws-region: ${{ eu-central-1 }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -93,8 +89,8 @@ jobs:
             -backend-config='region=${{ inputs.aws_region }}' \
             -backend-config='bucket=${{ inputs.backend_s3_bucket }}' \
             -backend-config='key=docker-ecr/terraform-${{ env.ECR_REPO_NAME }}.tfstate' \
-            -backend-config='dynamodb_table=${{ inputs.backend_dynamodb_table }}' \
-            -backend-config='role_arn=arn:aws:iam::${{ 911167888809 }}:role/${{ s3-backend-role-terraform }}'
+            #-backend-config='dynamodb_table=${{ inputs.backend_dynamodb_table }}' \
+            #-backend-config='role_arn=arn:aws:iam::${{ 911167888809 }}:role/${{ s3-backend-role-terraform }}'
         working-directory: ${{ github.action_path }}
 
       - name: Create ECR repo [TF apply]
